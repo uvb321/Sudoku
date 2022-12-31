@@ -11,9 +11,14 @@ namespace SudokuSolver
     {
         static void Main(string[] args)
         {
-            //main to run
+            /*//main to run
             Messages.Welcome_Message();
-            MainLoop.Main_Loop();
+            MainLoop.Main_Loop();*/
+            string str = "800000070006010053040600000000080400003000700020005038000000800004050061900002000";
+            int[][] board = Utils.ConvertStringToMat(str);
+            Sudoku s = new Sudoku(board);
+            s.Solve();
+           
         }
 
     }
