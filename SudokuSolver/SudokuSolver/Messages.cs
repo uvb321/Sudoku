@@ -28,17 +28,6 @@ namespace SudokuSolver
             Console.WriteLine("---------------------------------------------------------------");
         }
 
-        public static void PrintSudoku(int[][] mat, int size)
-        {
-            //printing to the screen the sudoku
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    Console.WriteLine(" "+mat[i][j]+" ");
-                }
-                Console.WriteLine("\n");
-            }
-        }
+        
     }
 }
