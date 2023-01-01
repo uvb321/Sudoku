@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,30 +30,44 @@ namespace SudokuSolver
 
         public Sudoku(int[][] grid)
         {
-            
+            //init to the attributes 
             this.SIZE = grid.Length;
-            this.BOX_SIZE = SIZE;
+            this.BOX_SIZE = (int)Math.Sqrt(SIZE);
             this.MAX_VALUE = SIZE;
-
-            this.grid = new int[SIZE][];
-            for (int i = 0; i < SIZE; i++)
-            {
-                this.grid[i] = new int[SIZE];
-            }
-        
-            for (int i = 0; i < SIZE; i++)
-                for (int j = 0; j < SIZE; j++)
-                    this.grid[i][j] = grid[i][j];
+            this.grid = grid;
         }
 
         public void Solve()
         {
+            //printing the unsolved sudoku
             Utils.PrintSudoku(this.grid);
+            //creating a stopwatch for the time measurement 
+            Stopwatch sw = new Stopwatch();
+            //starting the stopwatch here
+            sw.Start();
+            //creating a cover matrix from the recieved grid
             int[][] coverMat = ConvertInCoverMatrix(this.grid);
+            //creating a dancing links matrix from the cover matrix
             DancingLinksAlgo.DLX dlx = new DancingLinksAlgo.DLX(coverMat);
-            dlx.process(0);
+            //solving the dancing links matrix
+            bool didSolve = dlx.process(0);
+            //converting the answer back to a normal sudoku grid
             this.gridSolved = Utils.ConvertDLXListToGrid(dlx.result, this.SIZE);
-            Utils.PrintSudoku(this.gridSolved);
+            //stopping the stopwatch now that all of the solving processes are complete
+            sw.Stop();
+            //if board was solved
+            if (didSolve)
+            {
+                Console.WriteLine("---------------------\n solving time: {0}ms\n---------------------", sw.ElapsedMilliseconds);
+                //printing the solved sudoku grid
+                Console.WriteLine("\nsolved board:\n");
+                Utils.PrintSudoku(this.gridSolved);
+            }
+            //else
+            else
+            {
+                Console.WriteLine("\ncouldn't solve the board\n");
+            }
         }
 
       
@@ -65,6 +80,7 @@ namespace SudokuSolver
         // Building of an empty cover matrix
         private int[][] createCoverMatrix()
         {
+            //init to the cover matrix
             int[][] coverMatrix = new int[SIZE * SIZE * MAX_VALUE][];
             for (int i = 0; i < coverMatrix.Length; i++)
             {
@@ -79,7 +95,7 @@ namespace SudokuSolver
 
             return coverMatrix;
         }
-
+        //all of the below funcs are checking the values of the grid and putting values to the cover matrix by certain constrains
         private int CreateBoxConstraints(int[][] matrix, int header)
         {
             for (int row = COVER_START_INDEX; row <= SIZE; row += BOX_SIZE)
@@ -102,7 +118,7 @@ namespace SudokuSolver
 
             return header;
         }
-
+      
         private int CreateColumnConstraints(int[][] matrix, int header)
         {
             for (int column = COVER_START_INDEX; column <= SIZE; column++)
@@ -173,7 +189,11 @@ namespace SudokuSolver
                             if (num != n)
                             {
                                 //putting zeros to the array
-                                Array.Clear(coverMatrix[IndexInCoverMatrix(row, column, num)], 0, coverMatrix[0].Length);
+                                int rowToFill = IndexInCoverMatrix(row, column, num);
+                                for (int col = 0; col  < grid[0].Length; col++)
+                                {
+                                    coverMatrix[rowToFill][col] = 0;
+                                }
                             }
                         }
                     }

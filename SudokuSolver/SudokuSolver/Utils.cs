@@ -65,18 +65,22 @@ namespace SudokuSolver
         public static void PrintSudoku(int[][] mat)
         {
             
+            //this func prints the sudoku board
+            Console.WriteLine("---------------------------------------------------------------------------------------\n");
             for (int i = 0; i < mat.Length; i++)
             {
                 for (int j = 0; j < mat[0].Length; j++)
                 {
-                    Console.Write(" " + (mat[i][j]) + " ");
+                    Console.Write("| " + (mat[i][j]) + " |");
                 }
-                Console.WriteLine();
+                Console.WriteLine("\n");
             }
+            Console.WriteLine("---------------------------------------------------------------------------------------");
         }
 
         public static int[][] ConvertStringToMat(string s)
         {
+           
             //a function that converts a string to a matrix
             int size = (int)Math.Sqrt(s.Length);
             int[][] mat = new int[size][];
@@ -99,6 +103,10 @@ namespace SudokuSolver
 
         public static int[][] ConvertDLXListToGrid(List<DancingNode> answer, int SIZE)
         {
+            //this func recieves the answer to the solved sudoku in a list of dancingnodes
+            //and converts that list back to a matrix of numbers
+
+            //init to the new solved grid
             int[][] result = new int[SIZE][];
             for (int i = 0; i < SIZE; i++)
             {
