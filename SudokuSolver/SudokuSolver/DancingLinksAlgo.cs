@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +13,9 @@ namespace SudokuSolver
     {
         public class DancingNode
         {
+            //pointers to the node above, below, to the left and right
             public DancingNode Left, Right, Top, Bottom;
+            //pointer to the column node of this node
             public ColumnNode column;
 
             public DancingNode()
@@ -28,6 +31,7 @@ namespace SudokuSolver
 
             public DancingNode LinkDown(DancingNode node)
             {
+                //connecting a new node down from this node
                 node.Bottom = Bottom;
                 node.Bottom.Top = node;
                 node.Top = this;
@@ -37,7 +41,7 @@ namespace SudokuSolver
 
             public DancingNode LinkRight(DancingNode node)
             {
-                
+                //connecting a new node to the right of this node   
                 node.Right = Right;
                 node.Right.Left = node;
                 node.Left = this;
@@ -47,33 +51,39 @@ namespace SudokuSolver
 
             public void RemoveLeftRight()
             {
-                Left.Right = Right;
+                //disconnecting this node horizontally
                 Right.Left = Left;
+                Left.Right = Right;
             }
 
             public void ReinsertLeftRight()
             {
-                Left.Right = this;
+                //connecting this node horizontally
                 Right.Left = this;
+                Left.Right = this;
             }
 
             public void RemoveTopBottom()
             {
-                Top.Bottom = Bottom;
+                //disconnecting this node vertically
                 Bottom.Top = Top;
+                Top.Bottom = Bottom;
             }
 
             public void ReinsertTopBottom()
             {
-                Top.Bottom = this;
+                //connecting this node vertically
                 Bottom.Top = this;
+                Top.Bottom = this;
             }
         }
 
 
         public class ColumnNode : DancingNode
         {
+            //how many nodes are in the column
             public int size;
+            //column name
             public String name;
 
             public ColumnNode(String n) : base()
@@ -85,6 +95,7 @@ namespace SudokuSolver
 
             public void cover()
             {
+                //this func disconnects the whole column
                 RemoveLeftRight();
 
                 for (DancingNode i = Bottom; i != this; i = i.Bottom)
@@ -99,11 +110,12 @@ namespace SudokuSolver
 
             public void uncover()
             {
+                //this func connects back this whole column
                 for (DancingNode i = Top; i != this; i = i.Top)
                 {
                     for (DancingNode j = i.Left; j != i; j = j.Left)
                     {
-                        j.column.size++;
+                        j.column.size--;
                         j.ReinsertTopBottom();
                     }
                 }
@@ -114,20 +126,29 @@ namespace SudokuSolver
 
         public class DLX
         {
+            //a class that represents the dlx matrix
 
+            //points to the start of the data base
             private ColumnNode header;
+            //used in the solve func to store temp solutions
             private List<DancingNode> answer = new List<DancingNode>();
+            //the final result will be stored here
             public List<DancingNode> result;
 
-            public DLX(int[][] cover)
+            public DLX(int[][] coverMat)
             {
-                header = createDLXList(cover);
+                //creating a dlx matrix out of a cover matrix
+                header = createDLXList(coverMat);
             }
 
-            private ColumnNode createDLXList(int[][] grid)
+            //creating the dlx matrix out of the cover matrix that was created from the recieved grid
+            private ColumnNode createDLXList(int[][] coverMat)
             {
-                int nbColumns = grid[0].Length;
+                //number of columns
+                int nbColumns = coverMat[0].Length;
+                //creating the header node, will point to the start of the data base
                 ColumnNode headerNode = new ColumnNode("header");
+                //a list of nodes that represent the column node of each column
                 List<ColumnNode> columnNodes = new List<ColumnNode>();
 
                 for (int i = 0; i < nbColumns; i++)
@@ -137,9 +158,10 @@ namespace SudokuSolver
                     headerNode = (ColumnNode)headerNode.LinkRight(n);
                 }
                 
+
+                //connecting the nodes by the cover mat
                 headerNode = headerNode.Right.column;
-                int cnt = 0;
-                foreach (int[] aGrid in grid)
+                foreach (int[] aGrid in coverMat)
                 {
                     DancingNode prev = null;
 
@@ -169,80 +191,76 @@ namespace SudokuSolver
 
             private ColumnNode SelectMinCol()
             {
-                // Set the initial minimum column to the first column in the Dancing Links structure.
-                ColumnNode minCol = header.Right.column;
-                int minSize = minCol.size;
+                //this func returns the column node that has the least amount of nodes connected to it,it's better for the algorithm
+                //to work with the column that has the least amount of nodes in it
+                // init values.
+                int min = int.MaxValue;
+                ColumnNode columnNode = null;
 
-                // Iterate over the columns in the Dancing Links structure.
-                ColumnNode col = minCol;
-                while (col != header)
+                // iterate all columns from the right of the head node.
+                for (ColumnNode column = (ColumnNode)header.Right; column != header; column = (ColumnNode)column.Right)
                 {
-                    // If the current column has a smaller size than the current minimum, store it as the new minimum.
-                    if (col.size < minSize)
+                    // need to found the column with the minimum size.
+                    if (column.size < min)
                     {
-                        minCol = col;
-                        minSize = col.size;
+                        min = column.size;
+                        columnNode = column;
                     }
-
-                    col = col.Right.column;
                 }
-
-                // Return the column with the smallest size.
-                return minCol;
+                return columnNode;
             }
-
-
-
-            public void process(int k)
+            public bool process(int k)
             {
+                
+
+                //this func tries to find a solution for the dlx matrix, if susceeds return true, else false
                 if (header.Right == header)
                 {
                     // End of Algorithm X
                     // Result is copied in a result list
                     result = new List<DancingNode>(answer);
+                    // Return immediately, without exploring further branches
+                    return true;
                 }
-                else
+
+                // we choose column c
+                ColumnNode c = SelectMinCol();
+                c.cover();
+
+                for (DancingNode r = c.Bottom; r != c; r = r.Bottom)
                 {
-                    // we choose column c
-                    ColumnNode c = SelectMinCol();
-                    c.cover();
+                    // We add r line to partial solution
+                    answer.Add(r);
 
-                    for (DancingNode r = c.Bottom; r != c; r = r.Bottom)
+                    // We cover columns
+                    for (DancingNode j = r.Right; j != r; j = j.Right)
                     {
-                        // We add r line to partial solution
-                        answer.Add(r);
-
-                        // We cover columns
-                        for (DancingNode j = r.Right; j != r; j = j.Right)
-                        {
-                            j.column.cover();
-                        }
-
-                        // recursive call to leverl k + 1
-                        process(k + 1);
-
-                        // We go back
-                        r = answer[answer.Count - 1];
-                        answer.Remove(answer[answer.Count - 1]);
-                        c = r.column;
-
-                        // We uncover columns
-                        for (DancingNode j = r.Left; j != r; j = j.Left)
-                        {
-                            j.column.uncover();
-                        }
+                        j.column.cover();
                     }
 
-                    c.uncover();
+                    // recursive call to leverl k + 1
+                    //returning true if a sulotion already was found
+                    if (process(k + 1))
+                        return true;
+
+                    // We go back
+                    r = answer[answer.Count - 1];
+                    answer.Remove(answer[answer.Count - 1]);
+                    c = r.column;
+
+                    // We uncover columns
+                    for (DancingNode j = r.Left; j != r; j = j.Left)
+                    {
+                        j.column.uncover();
+                    }
                 }
+
+                c.uncover();
+                //couldn't find a solution
+                return false;
+
             }
-
-
-
-
         }
-
-
     }
 
 }
