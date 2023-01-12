@@ -64,36 +64,52 @@ namespace SudokuSolver
 
         public static void PrintSudoku(int[][] mat)
         {
+
+            bool addZero = mat.Length > 9;
             
-            //this func prints the sudoku board
             Console.WriteLine("---------------------------------------------------------------------------------------\n");
             for (int i = 0; i < mat.Length; i++)
             {
                 for (int j = 0; j < mat[0].Length; j++)
                 {
-                    Console.Write("| " + (mat[i][j]) + " |");
+                    //if the max value is bigger than 10 and the current number is less than 10, 0 needs to be added 
+                    //in order to print correctly
+                    if(addZero&& mat[i][j]<10)
+                        Console.Write("| 0" + (mat[i][j]) + " |");
+
+                    else
+                        Console.Write("| " + (mat[i][j]) + " |");
                 }
                 Console.WriteLine("\n");
             }
             Console.WriteLine("---------------------------------------------------------------------------------------");
         }
 
-        public static int[][] ConvertStringToMat(string s)
+        /// <summary>
+        /// this function converts a string to a sudoku board
+        /// </summary>
+        /// <param name="sudoku">a string that represents a sudoku board</param>
+        /// <returns>it returns a matrix of int that represents a sudoku board</returns>
+        public static int[][] ConvertStringToMat(string sudoku)
         {
-           
-            //a function that converts a string to a matrix
-            int size = (int)Math.Sqrt(s.Length);
+            //the size of the sudoku board is the squre root of the length of the string
+            int size = (int)Math.Sqrt(sudoku.Length);
+            //init to the matrix that will be returned
             int[][] mat = new int[size][];
             for (int i = 0; i < size; i++)
                 mat[i] = new int[size];
-            int index = 0;
+
+            //index that represents the current char that needs to be red from the string
+            int currentCharToRead = 0;
             
+            //double loop on the matrix to put the values in 
             for (int i = 0; i < mat.Length; i++)
             {
                 for (int j = 0; j < mat[0].Length; j++)
                 {
-                    mat[i][j] = s[index]-'0';
-                    index++;
+                    // doing -'0' to make the char its real value
+                    mat[i][j] = sudoku[currentCharToRead]-'0';
+                    currentCharToRead++;
 
                 }
             }
@@ -101,16 +117,21 @@ namespace SudokuSolver
             return mat;
         }
 
+        /// <summary>
+        /// this function converts the result of the dancing links algo back to a sudoku board represented in a mamtix
+        /// </summary>
+        /// <param name="answer">is a list of dancing nodes that represent the solution</param>
+        /// <param name="SIZE">size is the size of the board, needed to make the function generic</param>
+        /// <returns></returns>
         public static int[][] ConvertDLXListToGrid(List<DancingNode> answer, int SIZE)
         {
-            //this func recieves the answer to the solved sudoku in a list of dancingnodes
-            //and converts that list back to a matrix of numbers
+          
 
             //init to the new solved grid
-            int[][] result = new int[SIZE][];
+            int[][] solvedBoard = new int[SIZE][];
             for (int i = 0; i < SIZE; i++)
             {
-                result[i] = new int[SIZE];
+                solvedBoard[i] = new int[SIZE];
             }
 
             foreach (DancingNode node in answer)
@@ -137,10 +158,27 @@ namespace SudokuSolver
                 // and the affected value
                 int num = (ans2 % SIZE) + 1;
                 // we affect that on the result grid
-                result[r][c] = num;
+                solvedBoard[r][c] = num;
             }
 
-            return result;
+            return solvedBoard;
+        }
+
+        /// <summary>
+        /// this function is called from the main loop, it gets a string that represents a sudoku board, creates a matrix out of it, validates that matrix to see it got a logical 
+        /// sudoku board, and solves that sudoku board
+        /// </summary>
+        /// <param name="sudoku">a string that represents a sudoku board</param>
+        public static void ValidateAndSolveBoard(string sudoku)
+        {
+            //converting the string to a matrix
+            int[][] board = Utils.ConvertStringToMat(sudoku);
+            //validating the sudoku board
+            Validation.validate(sudoku);
+            //creagting an instance of the class Sudoku
+            Sudoku s = new Sudoku(board);
+            //solving the board
+            s.Solve();
         }
     }
 }

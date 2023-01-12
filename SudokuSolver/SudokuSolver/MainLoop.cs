@@ -23,7 +23,7 @@ namespace SudokuSolver
 
                 else if(choice == 1|| choice == 2)
                 {
-                    if(choice==1)
+                    if (choice == 1) { }
                         //getting sudoku from console
                         sudoku = Console.ReadLine();
 
@@ -33,9 +33,13 @@ namespace SudokuSolver
                         //to do
                     }
 
-                    Validation.validate(sudoku);
-                    //to be completed Messages.PrintSudoku()
-                    //to be completed Solver.solve()
+                    Utils.ValidateAndSolveBoard(sudoku);
+
+                    if(choice == 2)
+                    {
+                        //to do
+                        //write back to the file
+                    }
 
 
                 }
@@ -43,15 +47,14 @@ namespace SudokuSolver
 
                 else
                 {
-                    //throwing an invalid input exception
-                    //to do
+                    Console.WriteLine("Invlid Input, try again");
                 }
               
 
             }
 
 
-            Console.WriteLine("closing program");
+            Console.WriteLine("\n\nclosing program");
         }
 
     }

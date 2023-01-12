@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace SudokuSolver
 {
+    /// <summary>
+    /// this class represents a sudoku board
+    /// </summary>
     internal class Sudoku
     {
         // Grid size
@@ -15,53 +18,59 @@ namespace SudokuSolver
         // Box size
         private int BOX_SIZE;
         private static int EMPTY_CELL = 0;
-        // 4 constraints : cell, line, column, boxes
-        private static int CONSTRAINTS = 4;
         // Values for each cells
         private static int MIN_VALUE = 1;
         private int MAX_VALUE;
-        // Starting index for cover matrix
-        private static int COVER_START_INDEX = 1;
 
         //represents board
-        private int[][] grid;
+        private int[][] board;
         //represents solved board
-        private int[][] gridSolved;
+        private int[][] solvedBoard;
 
-        public Sudoku(int[][] grid)
+        public Sudoku(int[][] board)
         {
             //init to the attributes 
-            this.SIZE = grid.Length;
+            //the size of the board is the is how many rows there are in the matrix
+            this.SIZE = board.Length;
+            //the box size is the square root of the length of the board
             this.BOX_SIZE = (int)Math.Sqrt(SIZE);
+            //the max value in the board is as big as the length of the board
             this.MAX_VALUE = SIZE;
-            this.grid = grid;
+            this.board = board;
         }
 
+        /// <summary>
+        /// this function prints the board, start a stopwatch, turns the board into a cover matrix, solves the cover natrix,
+        //  converts the solved cover matrix back to a regular matrix and prints it
+        /// </summary>
         public void Solve()
         {
             //printing the unsolved sudoku
-            Utils.PrintSudoku(this.grid);
+            Utils.PrintSudoku(this.board);
             //creating a stopwatch for the time measurement 
             Stopwatch sw = new Stopwatch();
             //starting the stopwatch here
-            sw.Start();
+
             //creating a cover matrix from the recieved grid
-            int[][] coverMat = ConvertInCoverMatrix(this.grid);
+            sw.Start();
+            int[][] coverMat = ConvertInCoverMatrix();
             //creating a dancing links matrix from the cover matrix
             DancingLinksAlgo.DLX dlx = new DancingLinksAlgo.DLX(coverMat);
             //solving the dancing links matrix
+            
             bool didSolve = dlx.process(0);
-            //converting the answer back to a normal sudoku grid
-            this.gridSolved = Utils.ConvertDLXListToGrid(dlx.result, this.SIZE);
-            //stopping the stopwatch now that all of the solving processes are complete
             sw.Stop();
+            //converting the answer back to a normal sudoku grid
+            this.solvedBoard = Utils.ConvertDLXListToGrid(dlx.result, this.SIZE);
+            //stopping the stopwatch now that all of the solving processes are complete
+            
             //if board was solved
             if (didSolve)
             {
                 Console.WriteLine("---------------------\n solving time: {0}ms\n---------------------", sw.ElapsedMilliseconds);
                 //printing the solved sudoku grid
                 Console.WriteLine("\nsolved board:\n");
-                Utils.PrintSudoku(this.gridSolved);
+                Utils.PrintSudoku(this.solvedBoard);
             }
             //else
             else
@@ -71,45 +80,64 @@ namespace SudokuSolver
         }
 
       
-        // Index in the cover matrix
+        /// <summary>
+        /// this function returns the relative place in the cover matrix based on the place in the board
+        /// </summary>
+        /// <param name="row">current row in the board</param>
+        /// <param name="column">current column in the board</param>
+        /// <param name="num">current value of the cell in the board</param>
+        /// <returns></returns>
         private int IndexInCoverMatrix(int row, int column, int num)
         {
             return (row - 1) * SIZE * SIZE + (column - 1) * SIZE + (num - 1);
         }
 
-        // Building of an empty cover matrix
+        /// <summary>
+        /// this function builds the cover matrix based on the board 
+        /// </summary>
+        /// <returns>it returns the cover matrix that was created</returns>
         private int[][] createCoverMatrix()
         {
             //init to the cover matrix
             int[][] coverMatrix = new int[SIZE * SIZE * MAX_VALUE][];
             for (int i = 0; i < coverMatrix.Length; i++)
             {
-                coverMatrix[i] = new int[SIZE * SIZE * CONSTRAINTS];
+                //there are 4 constrains in a sudoku board: row, column, box and cell
+                coverMatrix[i] = new int[SIZE * SIZE * 4];
             }
 
             int header = 0;
+            //creating cell constrains
             header = CreateCellConstraints(coverMatrix, header);
+            //creatins row constrains
             header = CreateRowConstraints(coverMatrix, header);
+            //creating column constrains
             header = CreateColumnConstraints(coverMatrix, header);
+            //creating box constrains
             CreateBoxConstraints(coverMatrix, header);
-
+            //returning the cover matrix
             return coverMatrix;
         }
-        //all of the below funcs are checking the values of the grid and putting values to the cover matrix by certain constrains
-        private int CreateBoxConstraints(int[][] matrix, int header)
+       /// <summary>
+       /// this function creates the box constrains for the cover matrix
+       /// </summary>
+       /// <param name="coverMatrix">this is the cover matrix that the constrains will work on</param>
+       /// <param name="header"></param>
+       /// <returns>returns the header</returns>
+        private int CreateBoxConstraints(int[][] coverMatrix, int header)
         {
-            for (int row = COVER_START_INDEX; row <= SIZE; row += BOX_SIZE)
+            for (int row = 1; row <= SIZE; row += BOX_SIZE)
             {
-                for (int column = COVER_START_INDEX; column <= SIZE; column += BOX_SIZE)
+                for (int column = 1; column <= SIZE; column += BOX_SIZE)
                 {
-                    for (int n = COVER_START_INDEX; n <= SIZE; n++, header++)
+                    for (int n = 1; n <= SIZE; n++, header++)
                     {
                         for (int rowDelta = 0; rowDelta < BOX_SIZE; rowDelta++)
                         {
                             for (int columnDelta = 0; columnDelta < BOX_SIZE; columnDelta++)
                             {
                                 int index = IndexInCoverMatrix(row + rowDelta, column + columnDelta, n);
-                                matrix[index][header] = 1;
+                                coverMatrix[index][header] = 1;
                             }
                         }
                     }
@@ -119,16 +147,44 @@ namespace SudokuSolver
             return header;
         }
       
-        private int CreateColumnConstraints(int[][] matrix, int header)
+        /// <summary>
+        /// this function creates the column constrains in the cover matrix
+        /// </summary>
+        /// <param name="coverMatrix">this is the cover matrix</param>
+        /// <param name="header"></param>
+        /// <returns>returns the header</returns>
+        private int CreateColumnConstraints(int[][] coverMatrix, int header)
         {
-            for (int column = COVER_START_INDEX; column <= SIZE; column++)
+            for (int column = 1; column <= SIZE; column++)
             {
-                for (int n = COVER_START_INDEX; n <= SIZE; n++, header++)
+                for (int n = 1; n <= SIZE; n++, header++)
                 {
-                    for (int row = COVER_START_INDEX; row <= SIZE; row++)
+                    for (int row = 1; row <= SIZE; row++)
                     {
                         int index = IndexInCoverMatrix(row, column, n);
-                        matrix[index][header] = 1;
+                        coverMatrix[index][header] = 1;
+                    }
+                }
+            }
+
+            return header;
+        }
+        /// <summary>
+        /// this function creates the row constrains in the cover matrix
+        /// </summary>
+        /// <param name="coverMatrix">this is the cover matrix</param>
+        /// <param name="header"></param>
+        /// <returns>returns the header</returns>
+        private int CreateRowConstraints(int[][] coverMatrix, int header)
+        {
+            for (int row = 1; row <= SIZE; row++)
+            {
+                for (int num = 1; num <= SIZE; num++, header++)
+                {
+                    for (int column = 1; column <= SIZE; column++)
+                    {
+                        int index = IndexInCoverMatrix(row, column, num);
+                        coverMatrix[index][header] = 1;
                     }
                 }
             }
@@ -136,16 +192,22 @@ namespace SudokuSolver
             return header;
         }
 
-        private int CreateRowConstraints(int[][] matrix, int header)
+        /// <summary>
+        /// this function creates the cell constrains for the cover matrix
+        /// </summary>
+        /// <param name="coverMatrix">this is the cover matrix</param>
+        /// <param name="header">header is the start index of each column in the cover matrix</param>
+        /// <returns>returns the header</returns>
+        private int CreateCellConstraints(int[][] coverMatrix, int header)
         {
-            for (int row = COVER_START_INDEX; row <= SIZE; row++)
+            for (int row = 1; row <= SIZE; row++)
             {
-                for (int n = COVER_START_INDEX; n <= SIZE; n++, header++)
+                for (int column = 1; column <= SIZE; column++, header++)
                 {
-                    for (int column = COVER_START_INDEX; column <= SIZE; column++)
+                    for (int num = 1; num <= SIZE; num++)
                     {
-                        int index = IndexInCoverMatrix(row, column, n);
-                        matrix[index][header] = 1;
+                        int index = IndexInCoverMatrix(row, column, num);
+                        coverMatrix[index][header] = 1;
                     }
                 }
             }
@@ -153,44 +215,33 @@ namespace SudokuSolver
             return header;
         }
 
-        private int CreateCellConstraints(int[][] matrix, int header)
-        {
-            for (int row = COVER_START_INDEX; row <= SIZE; row++)
-            {
-                for (int column = COVER_START_INDEX; column <= SIZE; column++, header++)
-                {
-                    for (int n = COVER_START_INDEX; n <= SIZE; n++)
-                    {
-                        int index = IndexInCoverMatrix(row, column, n);
-                        matrix[index][header] = 1;
-                    }
-                }
-            }
-
-            return header;
-        }
-
-        // Converting Sudoku grid as a cover matrix
-        private int[][] ConvertInCoverMatrix(int[][] grid)
+        /// <summary>
+        /// this is the main function, it creates the complete cover matrix 
+        /// </summary>
+        /// <returns>returns the complete cover matrix</returns>
+        private int[][] ConvertInCoverMatrix()
         {
             int[][] coverMatrix = createCoverMatrix();
 
             // Taking into account the values already entered in Sudoku's grid instance
-            for (int row = COVER_START_INDEX; row <= SIZE; row++)
+            for (int row = 1; row <= SIZE; row++)
             {
-                for (int column = COVER_START_INDEX; column <= SIZE; column++)
+                for (int column = 1; column <= SIZE; column++)
                 {
-                    int n = grid[row - 1][column - 1];
+                    int currentValue = this.board[row-1][column-1];
 
-                    if (n != EMPTY_CELL)
+                    //if the current value isn't an empty cell
+                    if (currentValue!= EMPTY_CELL)
                     {
                         for (int num = MIN_VALUE; num <= MAX_VALUE; num++)
                         {
-                            if (num != n)
+
+                            //if the current num doesn't equal the current value the respective row in the cover matrix should be filled with 0's
+                            if (num != currentValue)
                             {
-                                //putting zeros to the array
+                                //putting zeros to the array if the number doesn't equal the current value
                                 int rowToFill = IndexInCoverMatrix(row, column, num);
-                                for (int col = 0; col  < grid[0].Length; col++)
+                                for (int col = 0; col  < this.board[0].Length; col++)
                                 {
                                     coverMatrix[rowToFill][col] = 0;
                                 }
@@ -199,7 +250,7 @@ namespace SudokuSolver
                     }
                 }
             }
-
+            //returning the complete cover matrix
             return coverMatrix;
         }
     }
