@@ -1,19 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SudokuSolver.CustomExceptions;
 
-//this module validates the input from the user
+
 
 namespace SudokuSolver
 {
+    /// <summary>
+    /// this module stores all of the functions that validate the input from the user
+    /// </summary>
     internal class Validation
     {
-
-        public static void validate(string sudoku)
+        /// <summary>
+        /// this function validates the sudoku board using a hash set of string and comparing every value with each constraint
+        /// </summary>
+        /// <param name="board">a matrix that represents a sudoku board</param>
+        public static void ValidateBoard(int[][] board)
         {
-            //to be completed
+            //a hashset that will tell if a number is conflicted
+            HashSet<string> seenVals = new HashSet<string>();
+
+            //loop on the rows of the board
+            for (int row = 0; row < board.Length; row++)
+            {
+                //loop on the cols of each board
+                for (int col = 0; col < board.Length; col++)
+                {
+                    int currentVal = board[row][col];
+                    //if the item isn't an empty cell
+                    if (currentVal != 0)
+                    {
+                        if (!seenVals.Add(currentVal + " found in row " + row) ||
+                        !seenVals.Add(currentVal + " found in col " + col) ||
+                        !seenVals.Add(currentVal + " in block " + row / 3 + "-" + col / 3))
+                        {
+                            if (!seenVals.Add(currentVal + " found in row " + row))
+                                throw new InvalidInputException(string.Format("cant have more than 1 {0} in the same row, row number: {1}",currentVal, row+1));
+                                
+                            else if(!seenVals.Add(currentVal + " found in col " + col))
+                                throw new InvalidInputException(string.Format("cant have more than 1 {0} in the same column, column number: {1}", currentVal, col + 1));
+                            
+                            else
+                                throw new InvalidInputException(string.Format("cant have more than 1 {0} in the same box, box: {1}-{2}", currentVal, (row/3)+1, (col/3)+1));
+                        }
+                            
+                       
+                    }
+                }
+            }
+        }
+
+        
+        /// <summary>
+        /// this function validates the string that reprsents the sudoku board
+        /// </summary>
+        /// <param name="sudoku">a string that represents a sudoku board</param>
+        /// <exception cref="InvalidBoardSizeException"></exception>
+        public static void ValidateString(string sudoku)
+        {
+            //finding the length of the board
+            double size = Math.Sqrt(sudoku.Length);
+            //if it contains a dot in it, it is not a natural number, therefore it is an invalid board
+            bool isValid =  !(size.ToString().Contains("."));
+            if (!isValid)
+                throw new InvalidBoardSizeException("recievd a board with illegal size");
+
+            //a max value in a sudoku board is as large as the size of the sudoku board
+            int maxValue = (int)size +'0';
+
+            //checking for illegal chars
+            foreach(char ch in sudoku) 
+            {
+                //checking if a char in the string is bigger than the max value or smaller than '0'
+                if (ch > maxValue || ch < '0')
+                    throw new InvalidCharException(string.Format("the char {0} is not legal",ch));
+            }
         }
 
     }

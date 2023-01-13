@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-//this module is for printing messages to the screen
+
 namespace SudokuSolver
 {
+    /// <summary>
+    /// this module is for printing different messages to the screen
+    /// </summary>
     internal class Messages
     {
         public static void Welcome_Message()

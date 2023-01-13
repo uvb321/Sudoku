@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace SudokuSolver
 {
+    /// <summary>
+    /// this module represents the algorithm of the program itself, here the board will be solved and turn back into a regular board
+    /// </summary>
     internal class DancingLinksAlgo
     {
         /// <summary>
@@ -195,15 +198,15 @@ namespace SudokuSolver
 
                 //connecting the nodes by the cover mat
                 headerNode = headerNode.Right.column;
-                foreach (int[] Column in coverMat)
+                foreach (int[] row in coverMat)
                 {
                     DancingNode prevNode = null;
 
-                    for (int j = 0; j < numOfCols; j++)
+                    for (int col = 0; col< numOfCols; col++)
                     {
-                        if (Column[j] == 1)
+                        if (row[col] == 1)
                         {
-                            ColumnNode colNode = columnNodes[j];
+                            ColumnNode colNode = columnNodes[col];
                             DancingNode newNode = new DancingNode(colNode);
 
                             if (prevNode == null)
@@ -253,7 +256,7 @@ namespace SudokuSolver
             /// </summary>
             /// <param name="depth"></param>
             /// <returns>retuens true if solution was found, false otherwise</returns>
-            public bool process(int depth)
+            public bool solveDLX(int depth)
             {
                 
                //if there are no more columns to check an answer was found
@@ -284,7 +287,7 @@ namespace SudokuSolver
 
                     // recursive call to leverl k + 1
                     //returning true if a sulotion already was found
-                    if (process(depth + 1))
+                    if (solveDLX(depth + 1))
                         return true;
 
                     // We go back
@@ -307,6 +310,53 @@ namespace SudokuSolver
                 //couldn't find a solution
                 return false;
 
+            }
+
+
+            /// <summary>
+            /// this function converts the result of the dancing links algo back to a sudoku board represented in a matrix
+            /// </summary>
+            /// <param name="SIZE">size is the size of the board, needed to make the function generic</param>
+            /// <returns></returns>
+            public int[][] ConvertDLXListToGrid(int SIZE)
+            {
+
+
+                //init to the new solved grid
+                int[][] solvedBoard = new int[SIZE][];
+                for (int i = 0; i < SIZE; i++)
+                {
+                    solvedBoard[i] = new int[SIZE];
+                }
+
+                foreach (DancingNode node in result)
+                {
+                    DancingNode rcNode = node;
+                    int min = int.Parse(rcNode.column.name);
+
+                    for (DancingNode tmp = node.Right; tmp != node; tmp = tmp.Right)
+                    {
+                        int val = int.Parse(tmp.column.name);
+
+                        if (val < min)
+                        {
+                            min = val;
+                            rcNode = tmp;
+                        }
+                    }
+
+                    // we get line and column
+                    int ans1 = int.Parse(rcNode.column.name);
+                    int ans2 = int.Parse(rcNode.Right.column.name);
+                    int r = ans1 / SIZE;
+                    int c = ans1 % SIZE;
+                    // and the affected value
+                    int num = (ans2 % SIZE) + 1;
+                    // we affect that on the result grid
+                    solvedBoard[r][c] = num;
+                }
+
+                return solvedBoard;
             }
         }
     }

@@ -37,6 +37,8 @@ namespace SudokuSolver
             //the max value in the board is as big as the length of the board
             this.MAX_VALUE = SIZE;
             this.board = board;
+
+
         }
 
         /// <summary>
@@ -58,16 +60,15 @@ namespace SudokuSolver
             DancingLinksAlgo.DLX dlx = new DancingLinksAlgo.DLX(coverMat);
             //solving the dancing links matrix
             
-            bool didSolve = dlx.process(0);
-            sw.Stop();
-            //converting the answer back to a normal sudoku grid
-            this.solvedBoard = Utils.ConvertDLXListToGrid(dlx.result, this.SIZE);
+            bool didSolve = dlx.solveDLX(0);
             //stopping the stopwatch now that all of the solving processes are complete
-            
+            sw.Stop();
+            Console.WriteLine("-------------------------------\n reached answer in: {0}ms\n-------------------------------", sw.ElapsedMilliseconds);
             //if board was solved
             if (didSolve)
             {
-                Console.WriteLine("---------------------\n solving time: {0}ms\n---------------------", sw.ElapsedMilliseconds);
+                //converting the answer back to a normal sudoku grid
+                this.solvedBoard = dlx.ConvertDLXListToGrid(this.SIZE);
                 //printing the solved sudoku grid
                 Console.WriteLine("\nsolved board:\n");
                 Utils.PrintSudoku(this.solvedBoard);
@@ -130,13 +131,13 @@ namespace SudokuSolver
             {
                 for (int column = 1; column <= SIZE; column += BOX_SIZE)
                 {
-                    for (int n = 1; n <= SIZE; n++, header++)
+                    for (int num = 1; num <= SIZE; num++, header++)
                     {
                         for (int rowDelta = 0; rowDelta < BOX_SIZE; rowDelta++)
                         {
                             for (int columnDelta = 0; columnDelta < BOX_SIZE; columnDelta++)
                             {
-                                int index = IndexInCoverMatrix(row + rowDelta, column + columnDelta, n);
+                                int index = IndexInCoverMatrix(row + rowDelta, column + columnDelta, num);
                                 coverMatrix[index][header] = 1;
                             }
                         }
@@ -157,11 +158,11 @@ namespace SudokuSolver
         {
             for (int column = 1; column <= SIZE; column++)
             {
-                for (int n = 1; n <= SIZE; n++, header++)
+                for (int num = 1; num <= SIZE; num++, header++)
                 {
                     for (int row = 1; row <= SIZE; row++)
                     {
-                        int index = IndexInCoverMatrix(row, column, n);
+                        int index = IndexInCoverMatrix(row, column, num);
                         coverMatrix[index][header] = 1;
                     }
                 }
@@ -222,7 +223,6 @@ namespace SudokuSolver
         private int[][] ConvertInCoverMatrix()
         {
             int[][] coverMatrix = createCoverMatrix();
-
             // Taking into account the values already entered in Sudoku's grid instance
             for (int row = 1; row <= SIZE; row++)
             {
@@ -241,7 +241,7 @@ namespace SudokuSolver
                             {
                                 //putting zeros to the array if the number doesn't equal the current value
                                 int rowToFill = IndexInCoverMatrix(row, column, num);
-                                for (int col = 0; col  < this.board[0].Length; col++)
+                                for (int col = 0; col  < coverMatrix[0].Length; col++)
                                 {
                                     coverMatrix[rowToFill][col] = 0;
                                 }
