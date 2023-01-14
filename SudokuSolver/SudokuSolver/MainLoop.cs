@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static SudokuSolver.CustomExceptions;
+
 
 
 namespace SudokuSolver
@@ -71,13 +71,14 @@ namespace SudokuSolver
 
                         //solving and printing the sudoku
                         sudoku = Utils.ValidateAndSolveBoard(sudoku);
-                        //printing the string of the solved sudoku to the screen
-                        Console.WriteLine(sudoku);
 
+                        //if choice was reading from file and the sudoku board isn't empty
                         if (choice == 2)
                         {
-                            //writing back the solution string to the file
-                            FileHandler.WriteFile(txtFile, sudoku);
+                            if(sudoku!="")
+                                //writing back the solution string to the file
+                                FileHandler.WriteFile(txtFile, sudoku);
+
                         }
 
                     }
