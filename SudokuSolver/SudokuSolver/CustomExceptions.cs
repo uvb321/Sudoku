@@ -12,15 +12,12 @@ namespace SudokuSolver
     /// <summary>
     /// this module stores all of the Custom Exception of the program
     /// </summary>
-    internal class CustomExceptions
-    {
-
-    }
+    
 
     /// <summary>
     /// thrown when the size of the board cannot represent a valid sudoku board
     /// </summary>
-    class InvalidBoardSizeException : Exception
+    public class InvalidBoardSizeException : Exception
     {
         public InvalidBoardSizeException(string msg) :base(msg){ }
     }
@@ -28,7 +25,7 @@ namespace SudokuSolver
     /// <summary>
     /// thrown when there is an invalid char in the string
     /// </summary>
-    class InvalidCharException : Exception
+    public class InvalidCharException : Exception
     {
         public InvalidCharException(string msg):base(msg) { }
     }
@@ -36,7 +33,7 @@ namespace SudokuSolver
     /// <summary>
     /// thrown when the board isn't legal
     /// </summary>
-    class InvalidBoardException : Exception
+    public class InvalidBoardException : Exception
     {
         public InvalidBoardException(string msg):base(msg) { }
     }
@@ -44,7 +41,7 @@ namespace SudokuSolver
     /// <summary>
     /// thrown when a problem with a file occurred
     /// </summary>
-    class FileException : Exception
+    public class FileException : Exception
     {
         public FileException(string msg): base(msg) { }
     }
