@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static SudokuSolver.CustomExceptions;
@@ -15,38 +17,71 @@ namespace SudokuSolver
     {
         public static void Main_Loop()
         {
-            while (true){
-                string sudoku="";
-                Messages.Loop_Message();
-                Console.Write("pleae enter your choice: ");
-                int choice = int.Parse(Console.ReadLine());
+            //these following three lines enables the program to recieve more than 254 chars from the console
+            int READLINE_BUFFER_SIZE = 700;
+            Stream inputStream = Console.OpenStandardInput(READLINE_BUFFER_SIZE);
+            Console.SetIn(new StreamReader(inputStream));
 
-                Console.WriteLine("\n\n-------------------------------------------------------------");
+            //init to params
+            string sudoku;
+            string txtFile;
+            int choice;
+
+            while (true){
+                sudoku = "";
+                txtFile = "";
+
+                Console.WriteLine("\n\n");
+                Messages.Loop_Message();
+                
+                choice = -1;
+                try
+                {
+                    choice = int.Parse(Console.ReadLine());
+                }
+                catch(FormatException FE) { }
+
+                Console.WriteLine("-------------------------------------------------------------");
                 //finishing the program
                 if (choice == 0)
                     break;
 
                 else if(choice == 1|| choice == 2)
                 {
+                    //if input by hand chosen
                     if (choice == 1)
                     {
                         Console.WriteLine("please enter a string that represent a sudoku board below: \n");
                         //getting sudoku from console
                         sudoku = Console.ReadLine();
+
                     }
-                        
-
-                    if (choice == 2)
-                    {
-                        //read sudoku from file
-                        //to do
-                    }
-
-
+                       
                     try
                     {
-                        Utils.ValidateAndSolveBoard(sudoku);
+                        //if input from file chosen
+                        if (choice == 2)
+                        {
+                            //reading the name of the text file
+                            Console.WriteLine("please enter the text file to read the board from below, please make sure to add .txt at the end: \n");
+                            txtFile = Console.ReadLine();
+                            sudoku = FileHandler.ReadFile(txtFile);
+
+                        }
+
+                        //solving and printing the sudoku
+                        sudoku = Utils.ValidateAndSolveBoard(sudoku);
+                        //printing the string of the solved sudoku to the screen
+                        Console.WriteLine(sudoku);
+
+                        if (choice == 2)
+                        {
+                            //writing back the solution string to the file
+                            FileHandler.WriteFile(txtFile, sudoku);
+                        }
+
                     }
+                    //catching all of the different exceptions
                     catch (InvalidBoardSizeException IBSE)
                     {
                         Console.WriteLine(IBSE.Message);
@@ -55,18 +90,14 @@ namespace SudokuSolver
                     {
                         Console.WriteLine(ICE.Message);
                     }
-                    catch(InvalidInputException INE)
+                    catch(InvalidBoardException INE)
                     {
                         Console.WriteLine(INE.Message);
                     }
-                   
-
-                    if(choice == 2)
+                    catch(FileException FE)
                     {
-                        //to do
-                        //write back to the file
+                        Console.WriteLine(FE.Message);
                     }
-
 
                 }
 
