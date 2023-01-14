@@ -36,8 +36,16 @@ namespace SudokuSolver
     /// <summary>
     /// thrown when the board isn't legal
     /// </summary>
-    class InvalidInputException : Exception
+    class InvalidBoardException : Exception
     {
-        public InvalidInputException(string msg):base(msg) { }
+        public InvalidBoardException(string msg):base(msg) { }
+    }
+
+    /// <summary>
+    /// thrown when a problem with a file occurred
+    /// </summary>
+    class FileException : Exception
+    {
+        public FileException(string msg): base(msg) { }
     }
 }
