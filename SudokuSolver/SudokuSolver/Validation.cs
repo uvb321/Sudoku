@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SudokuSolver.CustomExceptions;
+
 
 
 
@@ -37,11 +37,11 @@ namespace SudokuSolver
                     if (currentVal != 0)
                     {
                         if(!seenVals.Add(currentVal + " found in row " + row))
-                            throw new InvalidBoardException(string.Format("can't have more than 1 {0} in the same row, row number: {1}", currentVal, row + 1));
+                            throw new InvalidBoardException(string.Format("can't have more than one {0} in the same row, row number: {1}", currentVal, row + 1));
                         else if(!seenVals.Add(currentVal + " found in col " + col))
-                            throw new InvalidBoardException(string.Format("can't have more than 1 {0} in the same column, column number: {1}", currentVal, col + 1));
+                            throw new InvalidBoardException(string.Format("can't have more than one {0} in the same column, column number: {1}", currentVal, col + 1));
                         else if(!seenVals.Add(currentVal + " in block " + row / boxSize + "-" + col / boxSize))
-                            throw new InvalidBoardException(string.Format("can't have more than 1 {0} in the same box, box: {1}-{2}", currentVal, (row / boxSize) + 1, (col / boxSize) + 1));
+                            throw new InvalidBoardException(string.Format("can't have more than one {0} in the same box, box: {1}-{2}", currentVal, (row / boxSize) + 1, (col / boxSize) + 1));
 
 
                     }
@@ -72,11 +72,11 @@ namespace SudokuSolver
             int maxValue = (int)size +'0';
 
             //checking for illegal chars
-            foreach(char ch in sudoku) 
+            foreach(char currChar in sudoku) 
             {
                 //checking if a char in the string is bigger than the max value or smaller than '0'
-                if (ch > maxValue || ch < '0')
-                    throw new InvalidCharException(string.Format("the char {0} is not legal in this sudoku board",ch));
+                if (currChar > maxValue || currChar < '0')
+                    throw new InvalidCharException(string.Format("the char {0} is not legal in this sudoku board",currChar));
             }
         }
 
