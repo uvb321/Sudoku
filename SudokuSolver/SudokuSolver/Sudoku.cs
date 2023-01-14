@@ -80,14 +80,20 @@ namespace SudokuSolver
                 Utils.PrintSudoku(this.solvedBoard);
 
                 //converting the solved board back to a string
-                return Utils.ConvertMatToString(this.solvedBoard);
+                string SolvedSudokuStr = Utils.ConvertMatToString(this.solvedBoard);
+                //printing that string
+                Console.WriteLine("the string of the solved sudoku board: "+SolvedSudokuStr);
+
+                //returning the solved sudoku string
+                return SolvedSudokuStr;
 
             }
             //else
             else
             {
-                //returning "couldn't solve the board" if no solution was found
-                return "\ncouldn't solve the board\n";
+                Console.WriteLine("\ncouldn't solve the board\n");
+                //returning "" if no solution was found
+                return "";
             }
         }
 
