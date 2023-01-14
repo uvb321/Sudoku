@@ -14,7 +14,7 @@ namespace SudokuSolver
     /// <summary>
     /// this module is for regular functions that will be used on the sudoku board
     /// </summary>
-    internal class Utils
+    public class Utils
     {
 
         /// <summary>
@@ -27,17 +27,17 @@ namespace SudokuSolver
             bool addZero = board.Length > 9;
             
             Console.WriteLine("---------------------------------------------------------------------------------------\n");
-            for (int i = 0; i < board.Length; i++)
+            for (int row = 0; row < board.Length; row++)
             {
-                for (int j = 0; j < board[0].Length; j++)
+                for (int col = 0; col < board[0].Length; col++)
                 {
                     //if the max value is bigger than 10 and the current number is less than 10, 0 needs to be added 
                     //in order to print correctly
-                    if(addZero&& board[i][j]<10)
-                        Console.Write("| 0" + (board[i][j]) + " |");
+                    if(addZero&& board[row][col]<10)
+                        Console.Write("| 0" + (board[row][col]) + " |");
 
                     else
-                        Console.Write("| " + (board[i][j]) + " |");
+                        Console.Write("| " + (board[row][col]) + " |");
                 }
                 Console.WriteLine("\n");
             }
@@ -62,12 +62,12 @@ namespace SudokuSolver
             int currentCharToRead = 0;
             
             //double loop on the matrix to put the values in 
-            for (int i = 0; i < mat.Length; i++)
+            for (int row = 0; row < mat.Length; row++)
             {
-                for (int j = 0; j < mat[0].Length; j++)
+                for (int col = 0; col < mat[0].Length; col++)
                 {
                     // doing -'0' to make the char its real value
-                    mat[i][j] = sudoku[currentCharToRead]-'0';
+                    mat[row][col] = sudoku[currentCharToRead]-'0';
                     currentCharToRead++;
 
                 }
