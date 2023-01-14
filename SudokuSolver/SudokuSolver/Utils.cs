@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
@@ -75,14 +76,36 @@ namespace SudokuSolver
             return mat;
         }
 
-       
+        /// <summary>
+        /// this function recives a board and converts that btoard back to a string
+        /// </summary>
+        /// <param name="board">a matrix that represents a sudoku board</param>
+        /// <returns>returns a string that represents the same sudoku board</returns>
+        public static string ConvertMatToString(int[][] board)
+        {
+            char ch;
+            string strToRet = "";
+            for (int row = 0; row < board.Length; row++)
+            {
+                for (int col = 0; col < board[0].Length; col++)
+                {
+                    ch = (char)(board[row][col] + '0');
+                    strToRet += ch;
+                }
+            }
+
+            return strToRet;
+        }
+
+
 
         /// <summary>
         /// this function is called from the main loop, it gets a string that represents a sudoku board, creates a matrix out of it, validates that matrix to see it got a logical 
         /// sudoku board, and solves that sudoku board
         /// </summary>
         /// <param name="sudoku">a string that represents a sudoku board</param>
-        public static void ValidateAndSolveBoard(string sudoku)
+        /// <returns>returns a string that represents the same sudoku board</returns>
+        public static string ValidateAndSolveBoard(string sudoku)
         {
 
             //validating the string first
@@ -96,8 +119,14 @@ namespace SudokuSolver
 
             //creagting an instance of the class Sudoku
             Sudoku s = new Sudoku(board);
+
             //solving the board
-            s.Solve();
+            sudoku = s.Solve();
+
+            //returning the solved sudoku board
+            return sudoku;
         }
+
+        
     }
 }

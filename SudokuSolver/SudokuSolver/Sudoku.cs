@@ -45,38 +45,49 @@ namespace SudokuSolver
         /// this function prints the board, start a stopwatch, turns the board into a cover matrix, solves the cover natrix,
         //  converts the solved cover matrix back to a regular matrix and prints it
         /// </summary>
-        public void Solve()
+        public string Solve()
         {
             //printing the unsolved sudoku
             Utils.PrintSudoku(this.board);
+
             //creating a stopwatch for the time measurement 
             Stopwatch sw = new Stopwatch();
-            //starting the stopwatch here
 
-            //creating a cover matrix from the recieved grid
+            //starting the stopwatch here
             sw.Start();
+            
+            //creating a cover matrix from the board
             int[][] coverMat = ConvertInCoverMatrix();
+
             //creating a dancing links matrix from the cover matrix
             DancingLinksAlgo.DLX dlx = new DancingLinksAlgo.DLX(coverMat);
+
             //solving the dancing links matrix
-            
             bool didSolve = dlx.solveDLX(0);
+
             //stopping the stopwatch now that all of the solving processes are complete
             sw.Stop();
+
             Console.WriteLine("-------------------------------\n reached answer in: {0}ms\n-------------------------------", sw.ElapsedMilliseconds);
             //if board was solved
             if (didSolve)
             {
                 //converting the answer back to a normal sudoku grid
                 this.solvedBoard = dlx.ConvertDLXListToGrid(this.SIZE);
+
                 //printing the solved sudoku grid
                 Console.WriteLine("\nsolved board:\n");
                 Utils.PrintSudoku(this.solvedBoard);
+
+                //converting the solved board back to a string
+                return Utils.ConvertMatToString(this.solvedBoard);
+
             }
             //else
             else
             {
-                Console.WriteLine("\ncouldn't solve the board\n");
+                //returning "couldn't solve the board" if no solution was found
+                return "\ncouldn't solve the board\n";
             }
         }
 

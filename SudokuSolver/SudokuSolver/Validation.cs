@@ -24,6 +24,8 @@ namespace SudokuSolver
             //a hashset that will tell if a number is conflicted
             HashSet<string> seenVals = new HashSet<string>();
 
+            int boxSize = (int)Math.Sqrt(board.Length);
+
             //loop on the rows of the board
             for (int row = 0; row < board.Length; row++)
             {
@@ -34,21 +36,14 @@ namespace SudokuSolver
                     //if the item isn't an empty cell
                     if (currentVal != 0)
                     {
-                        if (!seenVals.Add(currentVal + " found in row " + row) ||
-                        !seenVals.Add(currentVal + " found in col " + col) ||
-                        !seenVals.Add(currentVal + " in block " + row / 3 + "-" + col / 3))
-                        {
-                            if (!seenVals.Add(currentVal + " found in row " + row))
-                                throw new InvalidInputException(string.Format("cant have more than 1 {0} in the same row, row number: {1}",currentVal, row+1));
-                                
-                            else if(!seenVals.Add(currentVal + " found in col " + col))
-                                throw new InvalidInputException(string.Format("cant have more than 1 {0} in the same column, column number: {1}", currentVal, col + 1));
-                            
-                            else
-                                throw new InvalidInputException(string.Format("cant have more than 1 {0} in the same box, box: {1}-{2}", currentVal, (row/3)+1, (col/3)+1));
-                        }
-                            
-                       
+                        if(!seenVals.Add(currentVal + " found in row " + row))
+                            throw new InvalidBoardException(string.Format("can't have more than 1 {0} in the same row, row number: {1}", currentVal, row + 1));
+                        else if(!seenVals.Add(currentVal + " found in col " + col))
+                            throw new InvalidBoardException(string.Format("can't have more than 1 {0} in the same column, column number: {1}", currentVal, col + 1));
+                        else if(!seenVals.Add(currentVal + " in block " + row / boxSize + "-" + col / boxSize))
+                            throw new InvalidBoardException(string.Format("can't have more than 1 {0} in the same box, box: {1}-{2}", currentVal, (row / boxSize) + 1, (col / boxSize) + 1));
+
+
                     }
                 }
             }
@@ -62,6 +57,10 @@ namespace SudokuSolver
         /// <exception cref="InvalidBoardSizeException"></exception>
         public static void ValidateString(string sudoku)
         {
+            //if empty string
+            if (sudoku == "")
+                throw new InvalidBoardSizeException("can't get an empty board as input");
+
             //finding the length of the board
             double size = Math.Sqrt(sudoku.Length);
             //if it contains a dot in it, it is not a natural number, therefore it is an invalid board
@@ -77,7 +76,7 @@ namespace SudokuSolver
             {
                 //checking if a char in the string is bigger than the max value or smaller than '0'
                 if (ch > maxValue || ch < '0')
-                    throw new InvalidCharException(string.Format("the char {0} is not legal",ch));
+                    throw new InvalidCharException(string.Format("the char {0} is not legal in this sudoku board",ch));
             }
         }
 
