@@ -47,3 +47,4 @@ the algorithm uses a spares matrix to sovle the cover matrix, the efficiency of 
 
 
 In order to use my Code you need to have visual studio 2022, run the .sln file and make sure that all of the .cs files are in the correct repo.
+press run on the program.cs file and follow the instructions.
