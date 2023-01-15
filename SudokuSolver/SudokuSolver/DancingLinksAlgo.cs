@@ -120,7 +120,7 @@ namespace SudokuSolver
             /// <summary>
             /// this function disconnect a whole column, and the nodes connected to that column, thus eliminating options
             /// </summary>
-            public void cover()
+            public void Cover()
             {
                
                 RemoveLeftRight();
@@ -138,7 +138,7 @@ namespace SudokuSolver
             /// <summary>
             /// this function reconnects the whole column and the nodes connected to the nodes in the column that is being rediscovered
             /// </summary>
-            public void uncover()
+            public void Uncover()
             {
                 for (DancingNode i = Top; i != this; i = i.Top)
                 {
@@ -170,7 +170,7 @@ namespace SudokuSolver
             public DLX(int[][] coverMat)
             {
                 //creating a dlx matrix out of a cover matrix
-                header = createDLXList(coverMat);
+                header = CreateDLXList(coverMat);
             }
 
             /// <summary>
@@ -178,7 +178,7 @@ namespace SudokuSolver
             /// </summary>
             /// <param name="coverMat">the coverMatrix is the cover matrix that was created from the sudoku board</param>
             /// <returns>returns the header node to the dlx </returns>
-            private ColumnNode createDLXList(int[][] coverMat)
+            private ColumnNode CreateDLXList(int[][] coverMat)
             {
                 //number of columns
                 int numOfCols = coverMat[0].Length;
@@ -256,7 +256,7 @@ namespace SudokuSolver
             /// </summary>
             /// <param name="depth"></param>
             /// <returns>retuens true if solution was found, false otherwise</returns>
-            public bool solveDLX(int depth)
+            public bool SolveDLX(int depth)
             {
                 
                //if there are no more columns to check an answer was found
@@ -271,7 +271,7 @@ namespace SudokuSolver
 
                 // we choose column c
                 ColumnNode colNode = SelectMinCol();
-                colNode.cover();
+                colNode.Cover();
 
                 for (DancingNode node = colNode.Bottom; node != colNode; node = node.Bottom)
                 {
@@ -282,12 +282,12 @@ namespace SudokuSolver
                     for (DancingNode nodeConnected = node.Right; nodeConnected != node; nodeConnected = nodeConnected.Right)
                     {
                         //covering the column of the connected node
-                        nodeConnected.column.cover();
+                        nodeConnected.column.Cover();
                     }
 
                     // recursive call to leverl k + 1
                     //returning true if a sulotion already was found
-                    if (solveDLX(depth + 1))
+                    if (SolveDLX(depth + 1))
                         return true;
 
                     // We go back
@@ -301,12 +301,12 @@ namespace SudokuSolver
                     for (DancingNode nodeConnected = node.Left; nodeConnected != node; nodeConnected = nodeConnected.Left)
                     {
                         //uncovering the column of the connected node
-                        nodeConnected.column.uncover();
+                        nodeConnected.column.Uncover();
                     }
                 }
 
                 //uncovring the board
-                colNode.uncover();
+                colNode.Uncover();
                 //couldn't find a solution
                 return false;
 
@@ -321,7 +321,6 @@ namespace SudokuSolver
             public int[][] ConvertDLXListToGrid(int SIZE)
             {
 
-
                 //init to the new solved grid
                 int[][] solvedBoard = new int[SIZE][];
                 for (int i = 0; i < SIZE; i++)
@@ -329,31 +328,33 @@ namespace SudokuSolver
                     solvedBoard[i] = new int[SIZE];
                 }
 
+                //going on each column in the list of the solution
                 foreach (DancingNode node in result)
                 {
                     DancingNode rcNode = node;
-                    int min = int.Parse(rcNode.column.name);
+                    int minColNode = int.Parse(rcNode.column.name);
 
-                    for (DancingNode tmp = node.Right; tmp != node; tmp = tmp.Right)
+                    //finding the left most column
+                    for (DancingNode runningNode = node.Right; runningNode != node; runningNode = runningNode.Right)
                     {
-                        int val = int.Parse(tmp.column.name);
+                        int currentColVal = int.Parse(runningNode.column.name);
 
-                        if (val < min)
+                        if (currentColVal < minColNode)
                         {
-                            min = val;
-                            rcNode = tmp;
+                            minColNode = currentColVal;
+                            rcNode = runningNode;
                         }
                     }
 
                     // we get line and column
-                    int answer1 = int.Parse(rcNode.column.name);
-                    int answer2 = int.Parse(rcNode.Right.column.name);
-                    int r = answer1 / SIZE;
-                    int c = answer1 % SIZE;
+                    int colNumber = int.Parse(rcNode.column.name);
+                    int colNumberToTheRight = int.Parse(rcNode.Right.column.name);
+                    int row = colNumber / SIZE;
+                    int col = colNumber % SIZE;
                     // and the affected value
-                    int num = (answer2 % SIZE) + 1;
+                    int num = (colNumberToTheRight % SIZE) + 1;
                     // we affect that on the result grid
-                    solvedBoard[r][c] = num;
+                    solvedBoard[row][col] = num;
                 }
 
                 return solvedBoard;

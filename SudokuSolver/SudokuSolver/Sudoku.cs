@@ -63,7 +63,7 @@ namespace SudokuSolver
             DancingLinksAlgo.DLX dlx = new DancingLinksAlgo.DLX(coverMat);
 
             //solving the dancing links matrix
-            bool didSolve = dlx.solveDLX(0);
+            bool didSolve = dlx.SolveDLX(0);
 
             //stopping the stopwatch now that all of the solving processes are complete
             sw.Stop();
@@ -114,7 +114,7 @@ namespace SudokuSolver
         /// this function builds the cover matrix based on the board 
         /// </summary>
         /// <returns>it returns the cover matrix that was created</returns>
-        private int[][] createCoverMatrix()
+        private int[][] CreateCoverMatrix()
         {
             //init to the cover matrix
             int[][] coverMatrix = new int[SIZE * SIZE * MAX_VALUE][];
@@ -239,7 +239,7 @@ namespace SudokuSolver
         /// <returns>returns the complete cover matrix</returns>
         private int[][] ConvertInCoverMatrix()
         {
-            int[][] coverMatrix = createCoverMatrix();
+            int[][] coverMatrix = CreateCoverMatrix();
             // Taking into account the values already entered in Sudoku's grid instance
             for (int row = 1; row <= SIZE; row++)
             {
