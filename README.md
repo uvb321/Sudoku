@@ -37,6 +37,14 @@ which to this board the solution would be:
 *please note that there are a few possible solutions to the board and so the program will return only 1 of them.
 
 
+boards that are bigger than 10 in size will use the characters after 9 in the ascii table to represent the values.
+: - 10
+; - 11
+< - 12
+= - 13
+> - 14
+and so on
+
 ALGORITHM:
 The algorithm used for solving the puzzle is called "Dancing Links" or DLX for short, this algorithm was invented by donald knuth and it is used to solve Exact cover problems. 
 A sudoku board can be defined as an exact cover problem because to a valid sudoku board can only be 1 answer.
