@@ -1,99 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
-using static SudokuSolver.DancingLinksAlgo;
 
-//this module is to store all of the different functions 
+
 
 namespace SudokuSolver
 {
-    internal class Utils
+    /// <summary>
+    /// this module is for regular functions that will be used on the sudoku board
+    /// </summary>
+    
+    public class Utils
     {
 
-        /*public bool IsInRow(int row, int number, SudokuBoard board)
+        /// <summary>
+        /// consts for the print sudoku method
+        /// </summary>
+        const string ONE_BY_ONE = "-----";
+        const string FOUR_BY_FOUR = "-------------";
+        const string NINE_BY_NINE = "-------------------------";
+        const string SIXT_BY_SIXT = "---------------------------------------------------------";
+        const string TWFIVE_BY_TWFIVE = "--------------------------------------------------------------------------------------";
+
+        /// <summary>
+        /// this function prints out a sudoku board
+        /// </summary>
+        /// <param name="board">a matrix that represents a sudoku board</param>
+        public static void PrintSudoku(int[][] board)
         {
-            //this func returns wether or not a number is already in a row
-            for (int i = 0; i < board.board_size; i++)
+            //flag to help with printing
+            bool addZero = board.Length > 9;
+            //finding box size for print
+            int BoxSize = (int)Math.Sqrt(board.Length);
+
+            string SpaceAmont = "";
+
+            switch (BoxSize)
             {
-                if (board.board[row,i] == number)
-                    return true;
+                case 1:
+                    SpaceAmont = ONE_BY_ONE;
+                    break;
+
+                case 2:
+                    SpaceAmont = FOUR_BY_FOUR;
+                    break;
+
+                case 3:
+                    SpaceAmont = NINE_BY_NINE;
+                    break;
+
+                case 4:
+                    SpaceAmont = SIXT_BY_SIXT;
+                    break;
+
+                case 5:
+                    SpaceAmont = TWFIVE_BY_TWFIVE;
+                    break;
+
             }
-            return false;
-        }
-
-        public bool IsInCol(int col, int number, SudokuBoard board)
-        {
-            //this func returns wether or not a number is already in a col
-            for (int i = 0; i < board.board_size; i++)
-            {
-                if (board.board[i,col] == number)
-                    return true;
-            }
-            return false;
-        }
-
-        public bool IsInBox(int row, int col, int number, SudokuBoard board)
-        {
-            //a function that returns if a placement of a number in a certain box is valid
-
-            //these two operations are done to place the position at the start of the correct box
-            int r = row - row % board.box_size;
-            int c = col-col % board.box_size;
-
-            for (int i = r; i < r+ board.box_size; i++)
-            {
-                for (int j = c; j < c+ board.box_size; j++)
-                {
-                    if (board.board[i,j] == number)
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool IsValid(int row, int col, int number, SudokuBoard board)
-        {
-            //a function that returns if a placement of a certain number in a certain place is valid
-            return !IsInBox(row, col, number, board) && !IsInCol(col, number, board) && !IsInRow(row, number, board);
-        }*/
-
-        public static void PrintSudoku(int[][] mat)
-        {
             
-            //this func prints the sudoku board
             Console.WriteLine("---------------------------------------------------------------------------------------\n");
-            for (int i = 0; i < mat.Length; i++)
+            Console.WriteLine(SpaceAmont);
+            for (int row = 0; row < board.Length; row++)
             {
-                for (int j = 0; j < mat[0].Length; j++)
+                Console.Write("|");
+                for (int col = 0; col < board[0].Length; col++)
                 {
-                    Console.Write("| " + (mat[i][j]) + " |");
+                   
+                    //if the max value is bigger than 10 and the current number is less than 10, 0 needs to be added 
+                    //in order to print correctly
+                    if (addZero&& board[row][col] < 10)
+                        Console.Write(" 0" + board[row][col]);
+
+                    else
+                        Console.Write(" " + board[row][col]);
+
+
+
+
+                    //adding the | at the end of the box
+                    if ((col + 1) % BoxSize == 0)
+                    {
+                        Console.Write(" |");
+                    }
+
                 }
-                Console.WriteLine("\n");
+
+                //going down a line
+                Console.WriteLine();
+
+                //printing the lines between boxes verticaly
+                if ((row + 1) % BoxSize == 0)
+                    //going down a line
+                    Console.WriteLine(SpaceAmont);
+
             }
-            Console.WriteLine("---------------------------------------------------------------------------------------");
+            Console.WriteLine("\n---------------------------------------------------------------------------------------");
         }
 
-        public static int[][] ConvertStringToMat(string s)
+        /// <summary>
+        /// this function converts a string to a sudoku board
+        /// </summary>
+        /// <param name="sudoku">a string that represents a sudoku board</param>
+        /// <returns>it returns a matrix of int that represents a sudoku board</returns>
+        public static int[][] ConvertStringToMat(string sudoku)
         {
-           
-            //a function that converts a string to a matrix
-            int size = (int)Math.Sqrt(s.Length);
+            //the size of the sudoku board is the squre root of the length of the string
+            int size = (int)Math.Sqrt(sudoku.Length);
+            //init to the matrix that will be returned
             int[][] mat = new int[size][];
             for (int i = 0; i < size; i++)
                 mat[i] = new int[size];
-            int index = 0;
+
+            //index that represents the current char that needs to be red from the string
+            int currentCharToRead = 0;
             
-            for (int i = 0; i < mat.Length; i++)
+            //double loop on the matrix to put the values in 
+            for (int row = 0; row < mat.Length; row++)
             {
-                for (int j = 0; j < mat[0].Length; j++)
+                for (int col = 0; col < mat[0].Length; col++)
                 {
-                    mat[i][j] = s[index]-'0';
-                    index++;
+                    // doing -'0' to make the char its real value
+                    mat[row][col] = sudoku[currentCharToRead]-'0';
+                    currentCharToRead++;
 
                 }
             }
@@ -101,46 +136,57 @@ namespace SudokuSolver
             return mat;
         }
 
-        public static int[][] ConvertDLXListToGrid(List<DancingNode> answer, int SIZE)
+        /// <summary>
+        /// this function recives a board and converts that btoard back to a string
+        /// </summary>
+        /// <param name="board">a matrix that represents a sudoku board</param>
+        /// <returns>returns a string that represents the same sudoku board</returns>
+        public static string ConvertMatToString(int[][] board)
         {
-            //this func recieves the answer to the solved sudoku in a list of dancingnodes
-            //and converts that list back to a matrix of numbers
-
-            //init to the new solved grid
-            int[][] result = new int[SIZE][];
-            for (int i = 0; i < SIZE; i++)
+            char ch;
+            string strToRet = "";
+            for (int row = 0; row < board.Length; row++)
             {
-                result[i] = new int[SIZE];
-            }
-
-            foreach (DancingNode node in answer)
-            {
-                DancingNode rcNode = node;
-                int min = int.Parse(rcNode.column.name);
-
-                for (DancingNode tmp = node.Right; tmp != node; tmp = tmp.Right)
+                for (int col = 0; col < board[0].Length; col++)
                 {
-                    int val = int.Parse(tmp.column.name);
-
-                    if (val < min)
-                    {
-                        min = val;
-                        rcNode = tmp;
-                    }
+                    ch = (char)(board[row][col] + '0');
+                    strToRet += ch;
                 }
-
-                // we get line and column
-                int ans1 = int.Parse(rcNode.column.name);
-                int ans2 = int.Parse(rcNode.Right.column.name);
-                int r = ans1 / SIZE;
-                int c = ans1 % SIZE;
-                // and the affected value
-                int num = (ans2 % SIZE) + 1;
-                // we affect that on the result grid
-                result[r][c] = num;
             }
 
-            return result;
+            return strToRet;
         }
+
+
+
+        /// <summary>
+        /// this function is called from the main loop, it gets a string that represents a sudoku board, creates a matrix out of it, validates that matrix to see it got a logical 
+        /// sudoku board, and solves that sudoku board
+        /// </summary>
+        /// <param name="sudoku">a string that represents a sudoku board</param>
+        /// <returns>returns a string that represents the same sudoku board</returns>
+        public static string ValidateAndSolveBoard(string sudoku)
+        {
+
+            //validating the string first
+            Validation.ValidateString(sudoku);
+
+            //converting the string to a matrix
+            int[][] board = Utils.ConvertStringToMat(sudoku);
+
+            //validating the sudoku board
+            Validation.ValidateBoard(board);
+
+            //creagting an instance of the class Sudoku
+            Sudoku s = new Sudoku(board);
+
+            //solving the board
+            sudoku = s.Solve();
+
+            //returning the solved sudoku board
+            return sudoku;
+        }
+
+        
     }
 }

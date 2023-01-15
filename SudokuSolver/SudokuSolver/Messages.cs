@@ -5,11 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-//this module is for printing messages to the screen
+
 namespace SudokuSolver
 {
+    /// <summary>
+    /// this module is for printing different messages to the screen
+    /// </summary>
     internal class Messages
     {
+        /// <summary>
+        /// prints the welcome message to the screen
+        /// </summary>
         public static void Welcome_Message()
         {
             Console.WriteLine("welcome to sudoku solver, you can enter a sudoku puzzle in two ways:\n" +
@@ -18,6 +24,9 @@ namespace SudokuSolver
                 "");
         }
 
+        /// <summary>
+        /// prints the loop message to the screen
+        /// </summary>
         public static void Loop_Message()
         {
             Console.WriteLine("---------------------------------------------------------------");
@@ -26,8 +35,10 @@ namespace SudokuSolver
                 "2. input 2 to input a puzzle by file.\n" +
                 "0. input 0 to close the program.");
             Console.WriteLine("---------------------------------------------------------------");
+            Console.Write("pleae enter your choice: ");
+
         }
 
-        
+
     }
 }
