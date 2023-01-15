@@ -346,12 +346,12 @@ namespace SudokuSolver
                     }
 
                     // we get line and column
-                    int ans1 = int.Parse(rcNode.column.name);
-                    int ans2 = int.Parse(rcNode.Right.column.name);
-                    int r = ans1 / SIZE;
-                    int c = ans1 % SIZE;
+                    int answer1 = int.Parse(rcNode.column.name);
+                    int answer2 = int.Parse(rcNode.Right.column.name);
+                    int r = answer1 / SIZE;
+                    int c = answer1 % SIZE;
                     // and the affected value
-                    int num = (ans2 % SIZE) + 1;
+                    int num = (answer2 % SIZE) + 1;
                     // we affect that on the result grid
                     solvedBoard[r][c] = num;
                 }
