@@ -39,7 +39,9 @@ namespace SudokuSolver
                 {
                     choice = int.Parse(Console.ReadLine());
                 }
-                catch(FormatException FE) { }
+                catch(FormatException) { }
+                catch (ArgumentNullException) { }
+                
 
                 Console.WriteLine("-------------------------------------------------------------");
                 //finishing the program
@@ -48,22 +50,23 @@ namespace SudokuSolver
 
                 else if(choice == 1|| choice == 2)
                 {
-                    //if input by hand chosen
-                    if (choice == 1)
-                    {
-                        Console.WriteLine("please enter a string that represent a sudoku board below: \n");
-                        //getting sudoku from console
-                        sudoku = Console.ReadLine();
-
-                    }
-                       
                     try
                     {
+
+                        //if input by hand chosen
+                        if (choice == 1)
+                        {
+                            Console.WriteLine("please enter a string that represent a sudoku board below: \n");
+                            //getting sudoku from console
+                            sudoku = Console.ReadLine();
+
+                        }
+
                         //if input from file chosen
                         if (choice == 2)
                         {
                             //reading the name of the text file
-                            Console.WriteLine("please enter the text file to read the board from below, please make sure to add .txt at the end: \n");
+                            Console.WriteLine("please enter the absolute path of the text file to read the board from below, please make sure to add .txt at the end: \n");
                             txtFile = Console.ReadLine();
                             sudoku = FileHandler.ReadFile(txtFile);
 
@@ -78,26 +81,38 @@ namespace SudokuSolver
                             if(sudoku!="")
                                 //writing back the solution string to the file
                                 FileHandler.WriteFile(txtFile, sudoku);
+                            //if it is "" than no solutions were found, writing that back
+                            else
+                                FileHandler.WriteFile(txtFile, "No solutions found");
 
+                            Console.WriteLine("\nwritten solution back to the file successfully");
                         }
 
                     }
                     //catching all of the different exceptions
                     catch (InvalidBoardSizeException IBSE)
                     {
-                        Console.WriteLine(IBSE.Message);
+                        Console.WriteLine("\n" + IBSE.Message);
                     }
                     catch(InvalidCharException ICE)
                     {
-                        Console.WriteLine(ICE.Message);
+                        Console.WriteLine("\n" + ICE.Message);
                     }
                     catch(InvalidBoardException INE)
                     {
-                        Console.WriteLine(INE.Message);
+                        Console.WriteLine("\n" + INE.Message);
                     }
                     catch(FileException FE)
                     {
-                        Console.WriteLine(FE.Message);
+                        Console.WriteLine("\n" + FE.Message);
+                    }
+                    catch(ArgumentNullException)
+                    {
+                        Console.WriteLine("\nCan't get null as input");
+                    }
+                    catch(Exception E)
+                    {
+                        Console.WriteLine("\n"+E.Message);
                     }
 
                 }
