@@ -12,7 +12,7 @@ My code is able to handle with 1x1, 4x4, 9x9, 16x16 and 25x25 sudoku boards.
 
 My code will recive a sudoku puzzle in two ways:
 1. from the console of the visual studio 2022
-2. from a text file, please note that the text file should be where all of the .cs files are
+2. from a text file, please note that the text file path entered needs to be absolute.
 
 the input should be a single string with no spaces or new lines and 0 as empty cells.
 for example:
@@ -54,5 +54,5 @@ the algorithm uses a spares matrix to sovle the cover matrix, the efficiency of 
 
 
 
-In order to use my Code you need to have visual studio 2022, run the .sln file and make sure that all of the .cs files are in the correct repo.
+In order to use my Code you need to have visual studio 2022, run the .sln file and make sure that all of the .cs files are in the correct directory.
 press run on the program.cs file and follow the instructions.
