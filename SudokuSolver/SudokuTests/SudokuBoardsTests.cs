@@ -251,7 +251,7 @@ namespace SudokuTests
             [Test]
             public void ReadFromFile_2_ReadAndSolve4X4()
             {
-                string Sudoku = FileHandler.ReadFile("sudoku_test_1.txt");
+                string Sudoku = FileHandler.ReadFile("../../../sudoku_test_1.txt");
                 string SolvedSudoku = Utils.ValidateAndSolveBoard(Sudoku);
                 Assert.That(SolvedSudoku, Is.EqualTo("1234341221434321"));
 
@@ -261,7 +261,7 @@ namespace SudokuTests
             [Test]
             public void ReadFromFile_3_ReadAndSolve9X9()
             {
-                string Sudoku = FileHandler.ReadFile("sudoku_test_2.txt");
+                string Sudoku = FileHandler.ReadFile("../../../sudoku_test_2.txt");
                 string SolvedSudoku = Utils.ValidateAndSolveBoard(Sudoku);
                 Assert.That(SolvedSudoku, Is.EqualTo("751486932683925174294317568428571396976843215135692487549168723362759841817234659"));
             }
@@ -270,7 +270,7 @@ namespace SudokuTests
             [Test]
             public void ReadFromFile_4_ReadAndSolve1X1()
             {
-                string Sudoku = FileHandler.ReadFile("sudoku_test_3.txt");
+                string Sudoku = FileHandler.ReadFile("../../../sudoku_test_3.txt");
                 string SolvedSudoku = Utils.ValidateAndSolveBoard(Sudoku);
                 Assert.That(SolvedSudoku, Is.EqualTo("1"));
             }
@@ -279,7 +279,7 @@ namespace SudokuTests
             [Test]
             public void ReadFromFile_5_ReadAndSolve16X16()
             {
-                string Sudoku = FileHandler.ReadFile("sudoku_test_4.txt");
+                string Sudoku = FileHandler.ReadFile("../../../sudoku_test_4.txt");
                 string SolvedSudoku = Utils.ValidateAndSolveBoard(Sudoku);
                 Assert.That(SolvedSudoku, Is.EqualTo("9@1<;?4536=>287::?;>1<=@7842653983572:>6;?@9<=412=6487391<5:@>?;129@?=5;<>:43687<;8539@72=?641:>4:>?<861@73;=952673=4>:28195?;@<3>21:48=9@6<7?;559?;7@2>4381:<=67<4651;3?:2=9@>8@8=:96?<5;>71423?673=598>2<@;:14;4<8@37:651?>29==1@2>;<4:978536?>5:9621?=4;387<@"));
             }
@@ -288,7 +288,7 @@ namespace SudokuTests
             [Test]
             public void ReadFromFile_6_ReadAndSolve25X25()
             {
-                string Sudoku = FileHandler.ReadFile("sudoku_test_5.txt");
+                string Sudoku = FileHandler.ReadFile("../../../sudoku_test_5.txt");
                 string SolvedSudoku = Utils.ValidateAndSolveBoard(Sudoku);
                 Assert.That(SolvedSudoku, Is.EqualTo("425;7DBE?1AI<=6>9G3CHF@:8:@93GHCA=6?1BF4E82ID<7;5>A8=HD<59I3;@E7>:F?B4G2C166>?1I:2FG@8HDC3;7<5AB4E9=<EBFC;8>74:9G52@6=1HD3IA?53:82=G6AE<D1I?B;C9@4H>7F;7DI<1439B>ECGF=HA2568:?@=46BF?<;:IH5@893D7>ECG12AH?@A1>F7DC3;42=8G:6IE<5B9>GCE98@25H76:BA<?4F1I=3D;E:863G1CB;F?IAD95@<72>4=HCIF<;6=DH2@4>1B?3E:G59A877DH2593@4>G86E;1AI=F?B<C:194G>A?IEF=<7:5HCB82@D6;3?=A@B7:8<5239HC4>6D;1EFGIBCI9?F;41=6GA@:7<DE385H>28F<D=BEGCAI2;315:>H?9@76436G4E57:2DC>H9<I18@=A;?FB@1;>AI6H894=5?7C2FGB3:DE<257:H@>?3<BF8DE64;A9=1GICIH3=8EA1;:D7?>@GB9C<F6245G;EC43D=6?9B2<IF@57:>A8H1DB1562I<>7ECF;HA=348:?9@G9A2?@4HBF85:36GDI1;>7C=<EF<>7:C95@G1A=482EH?6;IB3D"));
             }
