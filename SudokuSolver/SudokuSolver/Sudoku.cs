@@ -97,14 +97,14 @@ namespace SudokuSolver
             }
         }
 
-      
+
         /// <summary>
         /// this function returns the relative place in the cover matrix based on the place in the board
         /// </summary>
         /// <param name="row">current row in the board</param>
         /// <param name="column">current column in the board</param>
         /// <param name="num">current value of the cell in the board</param>
-        /// <returns></returns>
+        /// <returns>returns the corresponding place in the cover matrix</returns>
         private int IndexInCoverMatrix(int row, int column, int num)
         {
             return (row - 1) * SIZE * SIZE + (column - 1) * SIZE + (num - 1);
@@ -136,12 +136,12 @@ namespace SudokuSolver
             //returning the cover matrix
             return coverMatrix;
         }
-       /// <summary>
-       /// this function creates the box constrains for the cover matrix
-       /// </summary>
-       /// <param name="coverMatrix">this is the cover matrix that the constrains will work on</param>
-       /// <param name="header"></param>
-       /// <returns>returns the header</returns>
+        /// <summary>
+        /// this function creates the box constrains for the cover matrix
+        /// </summary>
+        /// <param name="coverMatrix">this is the cover matrix that the constrains will work on</param>
+        /// <param name="header">header is the current index to run from</param>
+        /// <returns>returns the header, for the next constraint</returns>
         private int CreateBoxConstraints(int[][] coverMatrix, int header)
         {
             for (int row = 1; row <= SIZE; row += BOX_SIZE)
@@ -164,13 +164,13 @@ namespace SudokuSolver
 
             return header;
         }
-      
+
         /// <summary>
         /// this function creates the column constrains in the cover matrix
         /// </summary>
         /// <param name="coverMatrix">this is the cover matrix</param>
-        /// <param name="header"></param>
-        /// <returns>returns the header</returns>
+        /// <param name="header">header is the current index to run from</param>
+        /// <returns>returns the header, for the next constraint</returns>
         private int CreateColumnConstraints(int[][] coverMatrix, int header)
         {
             for (int column = 1; column <= SIZE; column++)
@@ -191,8 +191,8 @@ namespace SudokuSolver
         /// this function creates the row constrains in the cover matrix
         /// </summary>
         /// <param name="coverMatrix">this is the cover matrix</param>
-        /// <param name="header"></param>
-        /// <returns>returns the header</returns>
+        /// <param name="header">header is the current index to run from</param>
+        /// <returns>returns the header, for the next constraint</returns>
         private int CreateRowConstraints(int[][] coverMatrix, int header)
         {
             for (int row = 1; row <= SIZE; row++)
@@ -215,7 +215,7 @@ namespace SudokuSolver
         /// </summary>
         /// <param name="coverMatrix">this is the cover matrix</param>
         /// <param name="header">header is the start index of each column in the cover matrix</param>
-        /// <returns>returns the header</returns>
+        /// <returns>returns the header, for the next constraint</returns>
         private int CreateCellConstraints(int[][] coverMatrix, int header)
         {
             for (int row = 1; row <= SIZE; row++)
