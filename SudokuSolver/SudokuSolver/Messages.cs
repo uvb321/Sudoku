@@ -35,7 +35,7 @@ namespace SudokuSolver
                 "2. input 2 to input a puzzle by file.\n" +
                 "0. input 0 to close the program.");
             Console.WriteLine("---------------------------------------------------------------");
-            Console.Write("pleae enter your choice: ");
+            Console.Write("please enter your choice: ");
 
         }
 

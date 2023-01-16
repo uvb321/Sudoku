@@ -57,9 +57,19 @@ namespace SudokuSolver
         /// <exception cref="InvalidBoardSizeException"></exception>
         public static void ValidateString(string sudoku)
         {
+            //if string is empty
+            if (sudoku == null)
+                throw new InvalidCharException("Can't get null as input");
+
             //if empty string
             if (sudoku == "")
                 throw new InvalidBoardSizeException("can't get an empty board as input");
+
+
+            //if the length of the string is bigger than 625 than throw an exception
+            if (sudoku.Length > 625)
+                throw new InvalidBoardSizeException("can't get a board larger than 25X25");
+
 
             //finding the length of the board
             double size = Math.Sqrt(sudoku.Length);

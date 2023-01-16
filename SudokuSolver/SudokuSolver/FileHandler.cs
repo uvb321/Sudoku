@@ -10,33 +10,49 @@ namespace SudokuSolver
     /// <summary>
     /// this module is responsible to all of the action on files
     /// </summary>
-    internal class FileHandler
+    public class FileHandler
     {
         /// <summary>
         /// this function reads a given file a returns its content
         /// </summary>
-        /// <param name="txtFile">the name of the file to read</param>
-        /// <returns>returns the string inside of a file</returns>
+        /// <param name="txtFilePath">the absolute path of the .txt file to read</param>
+        /// <returns>returns the string that represents the sudoku board inside of the given path</returns>
         /// <exception cref="FileException">thrown when there is a problem dealing with a file</exception>
-        public static string ReadFile(string txtFile)
+        public static string ReadFile(string txtFilePath)
         {
+            //checking if path is null
+            if (txtFilePath == null)
+                throw new FileException("Can't get null as a file path");
+
+            //checking if path is empty
+            if (txtFilePath == "")
+                throw new FileException("Can't get empty string as file path");
+
+            //string to return
             string sudoku = "";
+
+            if (!txtFilePath.EndsWith(".txt"))
+                throw new FileException(String.Format("The file {0} isn't a txt file", txtFilePath));
+
+           
+            
             //trying to read the files data to the sudoku string
-            if (File.Exists("../../" + txtFile))
+            
+            if (File.Exists(txtFilePath))
             {
                 try
                 {
-                    sudoku = File.ReadAllText("../../" + txtFile);
+                    sudoku = File.ReadAllText(txtFilePath);
                 }
                 catch (Exception)
                 {
-                    throw new FileException(string.Format("a problem occurred while dealing with the file {0}", txtFile));
+                    throw new FileException(string.Format("a problem occurred while dealing with the file {0}", txtFilePath));
                 }
 
             }
             else
             {
-                throw new FileException(string.Format("couldn't locate the {0} file",txtFile));
+                throw new FileException(string.Format("couldn't locate the {0} file",txtFilePath));
             }
 
             return sudoku;
@@ -45,18 +61,18 @@ namespace SudokuSolver
         /// <summary>
         /// this function write the sudoku string to the file
         /// </summary>
-        /// <param name="txtFile">name of the file</param>
-        /// <param name="sudokuSolution">a strign that represents a sudoku solution</param>
-        /// <exception cref="FileException">thrown if a problem occurred while wrtining to the file</exception>
-        public static void WriteFile(string txtFile, string sudokuSolution)
+        /// <param name="txtFilePath">absolute path of the .txt file</param>
+        /// <param name="sudokuSolution">a string that represents a sudoku solution</param>
+        /// <exception cref="FileException">thrown if a problem occurred while writing to the file</exception>
+        public static void WriteFile(string txtFilePath, string sudokuSolution)
         {
             try
             {
-                File.AppendAllText("../../" + txtFile, "\n"+sudokuSolution);
+                File.WriteAllText(txtFilePath, sudokuSolution);
             }
             catch (Exception)
             {
-                throw new FileException(string.Format("an error occurred when writing to the {0} file", txtFile));
+                throw new FileException(string.Format("an error occurred when writing to the {0} file", txtFilePath));
             }
 
             
